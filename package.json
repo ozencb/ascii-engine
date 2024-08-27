@@ -18,6 +18,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c",
+    "dev": "rollup -c --watch",
     "lint": "eslint 'src/**/*.{js,ts}' --fix"
   },
   "files": [

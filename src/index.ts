@@ -1,5 +1,1 @@
-export function hello() {
-  console.log('hello');
-}
-
-hello();
+export { render } from './renderer';
