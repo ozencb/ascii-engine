@@ -1,0 +1,45 @@
+{
+  "name": "ascii-engine",
+  "license": "MIT",
+  "author": "Özenç Bilgili",
+  "version": "1.0.0",
+  "description": "A render engine based on text",
+  "homepage": "https://github.com/ozencb/ascii-engine",
+  "bugs": {
+    "url": "https://github.com/ozencb/ascii-engine/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ozencb/ascii-engine.git"
+  },
+  "type": "module",
+  "main": "dist/ascii-engine.js",
+  "module": "dist/ascii-engine.esm.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "lint": "eslint 'src/**/*.{js,ts}' --fix"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@types/eslint": "^9",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "eslint": "^9.9.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.3",
+    "rollup": "^4.21.1",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.3.0"
+  },
+  "dependencies": {
+    "tslib": "^2.7.0"
+  }
+}

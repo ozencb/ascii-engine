@@ -1,0 +1,47 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore build output directories
+dist/
+build/
+
+# Ignore environment variable files
+.env
+
+# Ignore OS-specific files
+.DS_Store
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore dependency directories
+vendor/
+
+# Ignore compiled files
+*.out
+*.o
+*.class
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore coverage reports
+coverage/
+*.lcov
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+*.orig
+*.save
+
+# Ignore package-lock and yarn.lock files
+package-lock.json
+yarn.lock
+
+.yarn/
