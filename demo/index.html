@@ -7,20 +7,13 @@
   </head>
   <body style="background-color: black; color: white">
     <div id="background" style="height: 100vh"></div>
-    <script src="./dist/ascii-engine.js"></script>
+    <script src="../dist/ascii-engine.js"></script>
 
     <script>
-      AsciiEngine.render(document.getElementById('background'), {
-        main: () => {
-          console.log('main');
-        },
-        pre: () => {
-          console.log('pre');
-        },
-        post: () => {
-          console.log('post');
-        },
-      });
+      AsciiEngine.render(
+        document.getElementById('background'),
+        AsciiEngine.Demo,
+      );
     </script>
   </body>
 </html>

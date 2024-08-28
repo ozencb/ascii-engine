@@ -1,5 +1,11 @@
 import { Resolution } from './constants';
-import { Animation, RenderOptions } from './types';
+import { addPointerEvents } from './events';
+import {
+  Animation,
+  AnimationContext,
+  CursorContext,
+  RenderOptions,
+} from './types';
 
 const createSpanElement = (resolution: Resolution) => {
   const maxHeight = 128;
@@ -16,15 +22,16 @@ const createSpanElement = (resolution: Resolution) => {
   span.style.fontSize = calculatedHeight + 'px';
   span.style.userSelect = 'none';
   span.style.overflow = 'hidden';
+  span.style.lineHeight = '1';
   span.innerHTML = '&nbsp;';
 
   return span;
 };
 
-const calculateRowAndColumnNumber = (
+const calculateCellMetrics = (
   target: Element,
   resolution: Resolution,
-): { rows: number; columns: number } => {
+): { rows: number; cols: number; cellHeight: number; cellWidth: number } => {
   const { height: targetHeight, width: targetWidth } =
     target.getBoundingClientRect();
 
@@ -40,8 +47,75 @@ const calculateRowAndColumnNumber = (
 
   return {
     rows: Math.ceil(targetHeight / textHeight),
-    columns: Math.ceil(targetWidth / textWidth),
+    cols: Math.ceil(targetWidth / textWidth),
+    cellHeight: textHeight,
+    cellWidth: textWidth,
   };
+};
+
+const getContext = (
+  options: RenderOptions,
+  rows: number,
+  cols: number,
+): AnimationContext => {
+  return {
+    rows,
+    cols,
+    cellWidth: 1,
+    cellHeight: 1,
+    frame: 0,
+    deltaTime: 0,
+    elapsedTime: 0,
+    options,
+  };
+};
+
+const calculateCursor = (target: Element): CursorContext => {
+  const cursor: CursorContext = {
+    x: 0,
+    y: 0,
+    pressed: false,
+  };
+
+  addPointerEvents(target, cursor);
+
+  return cursor;
+};
+
+const runAnimationLoop = (
+  target: Element,
+  context: AnimationContext,
+  animation: Animation,
+  options: RenderOptions,
+  cursor: CursorContext,
+) => {
+  function loop(frame: number) {
+    // clear dom
+    target.innerHTML = '';
+
+    context.frame = frame;
+
+    // create span elements
+    for (let i = 0; i < context.rows; i++) {
+      const offs = i * context.cols;
+      const span = createSpanElement(options.resolution);
+      for (let j = 0; j < context.cols; j++) {
+        const idx = offs + j;
+
+        const char = animation.main({ x: j, y: i, idx }, context, cursor);
+
+        if (char) {
+          const { innerText } = span;
+          const newText = innerText.slice(0, j) + char + innerText.slice(j + 1);
+          span.innerText = newText;
+        }
+      }
+      target.appendChild(span);
+    }
+
+    requestAnimationFrame(loop);
+  }
+  loop(0);
 };
 
 export const render = (
@@ -53,17 +127,17 @@ export const render = (
 ): void => {
   if (!target) throw new Error('Target element cannot be null');
 
-  const { rows: amountOfRows, columns: amountOfColumns } =
-    calculateRowAndColumnNumber(target, options.resolution);
+  const { rows: amountOfRows, cols: amountOfColumns } = calculateCellMetrics(
+    target,
+    options.resolution,
+  );
 
-  console.log({ amountOfRows, amountOfColumns });
+  const context = getContext(options, amountOfRows, amountOfColumns);
 
-  // create span elements
-  for (let i = 0; i < amountOfRows; i++) {
-    const span = createSpanElement(options.resolution);
+  const cursor = calculateCursor(target);
+  // TEMP
+  const coords = { x: 0, y: 0, idx: 3 };
+  const buffer = [];
 
-    target.appendChild(span);
-  }
-
-  animation?.pre?.();
+  runAnimationLoop(target, context, animation, options, cursor);
 };
