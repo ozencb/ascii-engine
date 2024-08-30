@@ -1,13 +1,12 @@
-import { AnimationContext, CursorContext } from './types';
+import { bootElements, calculateCellMetrics } from './renderer';
+import { AnimationContext, CursorContext, RenderOptions } from './types';
 
 export const addPointerEvents = (
   target: Element,
-  cursor: CursorContext,
   context: AnimationContext,
+  cursor: CursorContext,
   bbox: DOMRectReadOnly,
 ) => {
-  console.log(target);
-
   target.addEventListener('pointermove', (e: Event) => {
     if (!(e instanceof PointerEvent)) return;
     cursor.x = e.x - bbox.left;
@@ -25,5 +24,20 @@ export const addPointerEvents = (
   target.addEventListener('pointerup', (e: Event) => {
     if (!(e instanceof PointerEvent)) return;
     cursor.pressed = false;
+  });
+};
+
+export const addWindowEvents = (
+  target: Element,
+  context: AnimationContext,
+  options: RenderOptions,
+) => {
+  window.addEventListener('resize', () => {
+    const updatedCellMetrics = calculateCellMetrics(target, options.resolution);
+    context.rows = updatedCellMetrics.rows;
+    context.cols = updatedCellMetrics.cols;
+    context.cellWidth = updatedCellMetrics.cellWidth;
+    context.cellHeight = updatedCellMetrics.cellHeight;
+    bootElements(target, context, options);
   });
 };
