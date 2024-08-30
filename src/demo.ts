@@ -3,12 +3,15 @@ import { RenderFunction } from './types';
 const density = [' ', '░', '▒', '▓', '█'];
 
 export const main: RenderFunction = (coord, context, cursor) => {
-  console.log({ coord, context, cursor });
-  console.log(context.frame);
-
   const { frame } = context;
 
   const index = frame % density.length;
 
-  return density[index];
+  console.log(cursor.col, coord.x);
+
+  if (coord.y === cursor.row && coord.x === cursor.col) return density[4];
+
+  return density[0];
+
+  //  return density[Math.floor(Math.random() * density.length)];
 };

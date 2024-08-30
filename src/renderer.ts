@@ -53,33 +53,36 @@ const calculateCellMetrics = (
   };
 };
 
-const getContext = (
-  options: RenderOptions,
-  rows: number,
-  cols: number,
-): AnimationContext => {
-  return {
-    rows,
-    cols,
-    cellWidth: 1,
-    cellHeight: 1,
-    frame: 0,
-    deltaTime: 0,
-    elapsedTime: 0,
-    options,
-  };
-};
-
-const calculateCursor = (target: Element): CursorContext => {
+const bootCursor = (
+  target: Element,
+  context: AnimationContext,
+): CursorContext => {
   const cursor: CursorContext = {
     x: 0,
     y: 0,
+    col: 0,
+    row: 0,
     pressed: false,
   };
 
-  addPointerEvents(target, cursor);
+  addPointerEvents(target, cursor, context, target.getBoundingClientRect());
 
   return cursor;
+};
+
+const bootElements = (
+  target: Element,
+  context: AnimationContext,
+  options: RenderOptions,
+) => {
+  // create span elements
+  for (let i = 0; i < context.rows; i++) {
+    target.appendChild(createSpanElement(options.resolution));
+  }
+};
+
+const getRowElement = (target: Element, row: number) => {
+  return target.children[row] as HTMLSpanElement;
 };
 
 const runAnimationLoop = (
@@ -90,19 +93,15 @@ const runAnimationLoop = (
   cursor: CursorContext,
 ) => {
   function loop(frame: number) {
-    // clear dom
-    target.innerHTML = '';
-
     context.frame = frame;
 
-    // create span elements
     for (let i = 0; i < context.rows; i++) {
       const offs = i * context.cols;
-      const span = createSpanElement(options.resolution);
+      const span = getRowElement(target, i);
       for (let j = 0; j < context.cols; j++) {
         const idx = offs + j;
-
-        const char = animation.main({ x: j, y: i, idx }, context, cursor);
+        const coords = { x: j, y: i, idx };
+        const char = animation.main(coords, context, cursor);
 
         if (char) {
           const { innerText } = span;
@@ -110,7 +109,6 @@ const runAnimationLoop = (
           span.innerText = newText;
         }
       }
-      target.appendChild(span);
     }
 
     requestAnimationFrame(loop);
@@ -127,14 +125,21 @@ export const render = (
 ): void => {
   if (!target) throw new Error('Target element cannot be null');
 
-  const { rows: amountOfRows, cols: amountOfColumns } = calculateCellMetrics(
-    target,
-    options.resolution,
-  );
+  const cellMetrics = calculateCellMetrics(target, options.resolution);
 
-  const context = getContext(options, amountOfRows, amountOfColumns);
+  const context = {
+    rows: cellMetrics.rows,
+    cols: cellMetrics.cols,
+    cellWidth: cellMetrics.cellWidth,
+    cellHeight: cellMetrics.cellHeight,
+    frame: 0,
+    deltaTime: 0,
+    elapsedTime: 0,
+    options,
+  };
+  bootElements(target, context, options);
 
-  const cursor = calculateCursor(target);
+  const cursor = bootCursor(target, context);
   // TEMP
   const coords = { x: 0, y: 0, idx: 3 };
   const buffer = [];

@@ -12,6 +12,8 @@ export type AnimationContext = {
 export type CursorContext = {
   x: number;
   y: number;
+  col: number;
+  row: number;
   pressed: boolean;
 };
 
