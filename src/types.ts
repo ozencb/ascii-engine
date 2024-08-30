@@ -1,3 +1,4 @@
+export type FrameBuffer = Array<{ row: number; col: number; char: string }>;
 export type AnimationContext = {
   rows: number;
   cols: number;
@@ -26,6 +27,7 @@ export type Coordinates = {
 export type RenderFunction = (
   coords: Coordinates,
   ctx: AnimationContext,
+  frameBuffer: FrameBuffer,
   cursor: CursorContext,
 ) => string | null;
 

@@ -4,10 +4,11 @@ import {
   Animation,
   AnimationContext,
   CursorContext,
+  FrameBuffer,
   RenderOptions,
 } from './types';
 
-const frameBuffer: Array<{ row: number; col: number; char: string }> = [];
+const frameBuffer: FrameBuffer = [];
 
 const createSpanElement = (resolution: Resolution) => {
   const maxHeight = 128;
@@ -125,8 +126,13 @@ const runAnimationLoop = (
   animation: Animation,
   cursor: CursorContext,
 ) => {
-  function loop(frame: number) {
-    context.frame = frame;
+  let previousTimestamp = 0;
+
+  function loop(timestamp: number) {
+    context.frame++;
+    context.deltaTime = (timestamp - previousTimestamp) / 1000;
+    context.elapsedTime += context.deltaTime;
+    previousTimestamp = timestamp;
 
     for (let i = 0; i < context.rows; i++) {
       const offs = i * context.cols;
@@ -134,7 +140,7 @@ const runAnimationLoop = (
       for (let j = 0; j < context.cols; j++) {
         const idx = offs + j;
         const coords = { x: j, y: i, idx };
-        const char = animation.main(coords, context, cursor);
+        const char = animation.main(coords, context, frameBuffer, cursor);
 
         if (char) {
           frameBuffer.push({ row: i, col: j, char });
