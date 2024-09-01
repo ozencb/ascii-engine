@@ -23,7 +23,7 @@ const createSpanElement = (resolution: Resolution) => {
   span.style.fontSize = calculatedHeight + 'px';
   span.style.userSelect = 'none';
   span.style.overflow = 'hidden';
-  span.style.lineHeight = '1';
+  span.style.lineHeight = '1.1';
   span.innerHTML = '&nbsp;';
 
   return span;
@@ -106,7 +106,7 @@ const getRowElement = (target: Element, row: number) => {
   return target.children[row] as HTMLSpanElement;
 };
 
-const processFrameBuffer = async (
+const processFrameBuffer = (
   target: Element,
   context: AnimationContext,
   frameBuffer: FrameBuffer,
@@ -178,7 +178,7 @@ export const render = (
   target: Element | null,
   animation: Animation,
   options: RenderOptions = {
-    resolution: Resolution.Maximum,
+    resolution: Resolution.High,
   },
 ): void => {
   if (!target) throw new Error('Target element cannot be null');
