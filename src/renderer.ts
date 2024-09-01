@@ -8,8 +8,6 @@ import {
   RenderOptions,
 } from './types';
 
-const frameBuffer: FrameBuffer = [];
-
 const createSpanElement = (resolution: Resolution) => {
   const maxHeight = 128;
   const minHeight = 8;
@@ -80,7 +78,6 @@ export const bootElements = (
 ) => {
   // reset first
   target.innerHTML = '';
-  // create span elements
   for (let i = 0; i < context.rows; i++) {
     target.appendChild(createSpanElement(options.resolution));
   }
@@ -109,15 +106,34 @@ const getRowElement = (target: Element, row: number) => {
   return target.children[row] as HTMLSpanElement;
 };
 
-const processFrameBuffer = (target: Element) => {
-  for (const { row, col, char } of frameBuffer) {
-    const rowElement = getRowElement(target, row);
-    rowElement.innerHTML =
-      rowElement.innerHTML.slice(0, col) +
-      char +
-      rowElement.innerHTML.slice(col + 1);
+const processFrameBuffer = async (
+  target: Element,
+  context: AnimationContext,
+  frameBuffer: FrameBuffer,
+) => {
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < context.rows; i++) {
+    const rowElement = getRowElement(target, i);
+
+    if (!rowElement) {
+      continue;
+    }
+
+    const rowFragment = document.createDocumentFragment();
+    const rowContent = rowElement.innerHTML.split('');
+
+    frameBuffer[i].forEach((char, j) => {
+      if (rowContent[j] !== char) {
+        rowContent[j] = char;
+      }
+    });
+
+    rowElement.innerHTML = rowContent.join('');
+    rowFragment.appendChild(rowElement);
+    fragment.appendChild(rowFragment);
   }
-  frameBuffer.length = 0;
+  target.appendChild(fragment);
 };
 
 const runAnimationLoop = (
@@ -127,28 +143,32 @@ const runAnimationLoop = (
   cursor: CursorContext,
 ) => {
   let previousTimestamp = 0;
+  const frameBuffer: FrameBuffer = [];
 
   function loop(timestamp: number) {
-    context.frame++;
     context.deltaTime = (timestamp - previousTimestamp) / 1000;
     context.elapsedTime += context.deltaTime;
     previousTimestamp = timestamp;
 
     for (let i = 0; i < context.rows; i++) {
-      const offs = i * context.cols;
-
-      for (let j = 0; j < context.cols; j++) {
-        const idx = offs + j;
-        const coords = { x: j, y: i, idx };
-        const char = animation.main(coords, context, frameBuffer, cursor);
-
-        if (char) {
-          frameBuffer.push({ row: i, col: j, char });
-        }
+      if (!frameBuffer[i]) {
+        frameBuffer[i] = Array(context.cols).fill('&nbsp;');
       }
     }
 
-    processFrameBuffer(target);
+    for (let i = 0; i < context.rows; i++) {
+      for (let j = 0; j < context.cols; j++) {
+        const coords = { x: j, y: i };
+        const char = animation.main(coords, context, frameBuffer, cursor);
+
+        frameBuffer[i][j] = char || '&nbsp;';
+      }
+    }
+
+    processFrameBuffer(target, context, [...frameBuffer]);
+    frameBuffer.length = 0;
+    context.frame++;
+
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
@@ -158,12 +178,13 @@ export const render = (
   target: Element | null,
   animation: Animation,
   options: RenderOptions = {
-    resolution: Resolution.Low,
+    resolution: Resolution.Maximum,
   },
 ): void => {
   if (!target) throw new Error('Target element cannot be null');
 
   const context = bootContext(target, options);
+
   bootElements(target, context, options);
   const cursor = bootCursor(target, context);
 
