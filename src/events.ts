@@ -5,8 +5,8 @@ export const addPointerEvents = (
   target: HTMLElement,
   context: AnimationContext,
   cursor: CursorContext,
-  bbox: DOMRectReadOnly,
 ) => {
+  const bbox = target.getBoundingClientRect();
   target.addEventListener('pointermove', (e: Event) => {
     if (!(e instanceof PointerEvent)) return;
     cursor.x = e.x - bbox.left;

@@ -1,9 +1,13 @@
 export type FrameBuffer = string[][];
-export type AnimationContext = {
+
+export type CellMetrics = {
   rows: number;
   cols: number;
   cellWidth: number;
   cellHeight: number;
+};
+
+export type AnimationContext = CellMetrics & {
   frame: number;
   deltaTime: number;
   elapsedTime: number;

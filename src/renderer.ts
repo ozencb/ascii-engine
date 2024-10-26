@@ -3,6 +3,7 @@ import { addPointerEvents, addWindowEvents } from './events';
 import {
   Animation,
   AnimationContext,
+  CellMetrics,
   CursorContext,
   FrameBuffer,
   RenderOptions,
@@ -12,10 +13,9 @@ const createBaseSpanElement = () => {
   const span = document.createElement('span');
   span.style.display = 'block';
   span.style.fontFamily = 'monospace';
-  span.style.fontSize = '16px';
   span.style.userSelect = 'none';
   span.style.overflow = 'hidden';
-  span.style.lineHeight = '1';
+
   span.innerHTML = Nbsp;
 
   return span;
@@ -28,6 +28,7 @@ const createSpanElement = (context: AnimationContext) => {
 
   span.style.height = `${cellHeight}px`;
   span.style.fontSize = `${cellHeight}px`;
+  span.style.lineHeight = `${cellHeight}px`;
   span.innerHTML = Nbsp;
 
   return span;
@@ -36,7 +37,7 @@ const createSpanElement = (context: AnimationContext) => {
 export const calculateCellMetrics = (
   target: HTMLElement,
   resolution: Resolution,
-): { rows: number; cols: number; cellHeight: number; cellWidth: number } => {
+): CellMetrics => {
   const { height: targetHeight, width: targetWidth } =
     target.getBoundingClientRect();
 
@@ -44,6 +45,7 @@ export const calculateCellMetrics = (
 
   tempEl.style.visibility = 'hidden';
   tempEl.style.display = 'inline';
+  tempEl.innerHTML = Nbsp;
   target.appendChild(tempEl);
 
   const { height: baseHeight, width: baseWidth } =
@@ -52,11 +54,12 @@ export const calculateCellMetrics = (
 
   const scale = resolution * ScaleFactor;
 
-  const cellHeight = baseHeight / scale;
-  const cellWidth = baseWidth / scale;
+  const cellHeight = Math.floor(baseHeight / scale);
+  const cellWidth = cellHeight * 0.6;
 
-  const rows = targetHeight > 0 ? Math.floor(targetHeight / cellHeight) : 0;
-  const cols = targetWidth > 0 ? Math.floor(targetWidth / cellWidth) : 0;
+  const rows =
+    (targetHeight > 0 ? Math.floor(targetHeight / cellHeight) : 0) + 1; // +1 to prevent empty row at the bottom
+  const cols = (targetWidth > 0 ? Math.floor(targetWidth / cellWidth) : 0) + 1;
 
   return {
     rows,
@@ -78,7 +81,7 @@ const bootCursor = (
     pressed: false,
   };
 
-  addPointerEvents(target, context, cursor, target.getBoundingClientRect());
+  addPointerEvents(target, context, cursor);
 
   return cursor;
 };
