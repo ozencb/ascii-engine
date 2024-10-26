@@ -181,7 +181,7 @@ export const render = (
   target: HTMLElement | null,
   animation: Animation,
   options: RenderOptions = {
-    resolution: Resolution.High,
+    resolution: Resolution.Maximum,
   },
 ): void => {
   if (!target) throw new Error('Target element cannot be null');
