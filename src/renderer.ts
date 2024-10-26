@@ -1,4 +1,4 @@
-import { Resolution } from './constants';
+import { Resolution, Nbsp, ScaleFactor } from './constants';
 import { addPointerEvents, addWindowEvents } from './events';
 import {
   Animation,
@@ -8,49 +8,66 @@ import {
   RenderOptions,
 } from './types';
 
-const createSpanElement = (targetHeight: number, rows: number) => {
-  const calculatedHeight = Math.floor(targetHeight / rows);
-
+const createBaseSpanElement = () => {
   const span = document.createElement('span');
   span.style.display = 'block';
-  span.style.height = calculatedHeight + 'px';
   span.style.fontFamily = 'monospace';
-  span.style.fontSize = calculatedHeight + 'px';
+  span.style.fontSize = '16px';
   span.style.userSelect = 'none';
   span.style.overflow = 'hidden';
   span.style.lineHeight = '1';
-  span.innerHTML = '&nbsp;';
+  span.innerHTML = Nbsp;
+
+  return span;
+};
+
+const createSpanElement = (context: AnimationContext) => {
+  const { cellHeight } = context;
+
+  const span = createBaseSpanElement();
+
+  span.style.height = `${cellHeight}px`;
+  span.style.fontSize = `${cellHeight}px`;
+  span.innerHTML = Nbsp;
 
   return span;
 };
 
 export const calculateCellMetrics = (
-  target: Element,
+  target: HTMLElement,
   resolution: Resolution,
 ): { rows: number; cols: number; cellHeight: number; cellWidth: number } => {
   const { height: targetHeight, width: targetWidth } =
     target.getBoundingClientRect();
 
-  // temp element for getting real block height
-  const tempEl = createSpanElement(targetHeight, resolution);
+  const tempEl = createBaseSpanElement();
 
   tempEl.style.visibility = 'hidden';
   tempEl.style.display = 'inline';
   target.appendChild(tempEl);
-  const { height: textHeight, width: textWidth } =
+
+  const { height: baseHeight, width: baseWidth } =
     tempEl.getBoundingClientRect();
   target.removeChild(tempEl);
 
+  const scale = resolution * ScaleFactor;
+
+  const cellHeight = baseHeight / scale;
+  const cellWidth = baseWidth / scale;
+
+  const rows = targetHeight > 0 ? Math.floor(targetHeight / cellHeight) : 0;
+  const cols = targetWidth > 0 ? Math.floor(targetWidth / cellWidth) : 0;
+
   return {
-    rows: targetHeight > 0 ? Math.ceil(targetHeight / textHeight) : 0,
-    cols: targetWidth > 0 ? Math.ceil(targetWidth / textWidth) : 0,
-    cellHeight: textHeight,
-    cellWidth: textWidth,
+    rows,
+    cols,
+    cellHeight,
+    cellWidth,
   };
 };
 
 const bootCursor = (
-  target: Element,
+  target: HTMLElement,
   context: AnimationContext,
 ): CursorContext => {
   const cursor: CursorContext = {
@@ -66,20 +83,22 @@ const bootCursor = (
   return cursor;
 };
 
-export const bootElements = (target: Element, context: AnimationContext) => {
-  const { height: targetHeight } = target.getBoundingClientRect();
-  // reset first
+export const bootElements = (
+  target: HTMLElement,
+  context: AnimationContext,
+) => {
+  // Reset target content
   target.innerHTML = '';
 
   for (let i = 0; i < context.rows; i++) {
-    target.appendChild(createSpanElement(targetHeight, context.rows));
+    target.appendChild(createSpanElement(context));
   }
 };
 
-const bootContext = (target: Element, options: RenderOptions) => {
+const bootContext = (target: HTMLElement, options: RenderOptions) => {
   const cellMetrics = calculateCellMetrics(target, options.resolution);
 
-  const context = {
+  const context: AnimationContext = {
     rows: cellMetrics.rows,
     cols: cellMetrics.cols,
     cellWidth: cellMetrics.cellWidth,
@@ -95,12 +114,12 @@ const bootContext = (target: Element, options: RenderOptions) => {
   return context;
 };
 
-const getRowElement = (target: Element, row: number) => {
+const getRowElement = (target: HTMLElement, row: number) => {
   return target.children[row] as HTMLSpanElement;
 };
 
 const processFrameBuffer = (
-  target: Element,
+  target: HTMLElement,
   context: AnimationContext,
   frameBuffer: FrameBuffer,
 ) => {
@@ -108,11 +127,9 @@ const processFrameBuffer = (
     const rowElement = getRowElement(target, i);
     if (!rowElement) continue;
 
-    const rowContent = rowElement.innerHTML.split('');
+    const rowContent: string[] = [];
     frameBuffer[i].forEach((char, j) => {
-      if (rowContent[j] !== char) {
-        rowContent[j] = char;
-      }
+      rowContent[j] = char;
     });
 
     rowElement.innerHTML = rowContent.join('');
@@ -120,7 +137,7 @@ const processFrameBuffer = (
 };
 
 const runAnimationLoop = (
-  target: Element,
+  target: HTMLElement,
   context: AnimationContext,
   animation: Animation,
   cursor: CursorContext,
@@ -129,7 +146,6 @@ const runAnimationLoop = (
   const frameBuffer: FrameBuffer = [];
 
   function loop(timestamp: number) {
-    //if (context.frame > 1) return;
     context.deltaTime = (timestamp - previousTimestamp) / 1000;
     context.elapsedTime += context.deltaTime;
     previousTimestamp = timestamp;
@@ -143,11 +159,9 @@ const runAnimationLoop = (
     for (let i = 0; i < context.rows; i++) {
       for (let j = 0; j < context.cols; j++) {
         const coords = { x: j, y: i };
-        let char = animation.main(coords, context, frameBuffer, cursor);
+        const char = animation.main(coords, context, frameBuffer, cursor);
 
-        if (!char || char === ' ') char = '&nbsp;';
-
-        frameBuffer[i][j] = char;
+        frameBuffer[i][j] = !char || char === ' ' ? Nbsp : char;
       }
     }
 
@@ -161,10 +175,10 @@ const runAnimationLoop = (
 };
 
 export const render = (
-  target: Element | null,
+  target: HTMLElement | null,
   animation: Animation,
   options: RenderOptions = {
-    resolution: Resolution.Maximum,
+    resolution: Resolution.High,
   },
 ): void => {
   if (!target) throw new Error('Target element cannot be null');

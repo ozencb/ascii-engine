@@ -10,3 +10,6 @@ export enum Resolution {
   Extreme = 9,
   Maximum = 10,
 }
+
+export const Nbsp = '\u00A0';
+export const ScaleFactor = 0.05;

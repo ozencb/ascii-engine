@@ -2,7 +2,7 @@ import { bootElements, calculateCellMetrics } from './renderer';
 import { AnimationContext, CursorContext, RenderOptions } from './types';
 
 export const addPointerEvents = (
-  target: Element,
+  target: HTMLElement,
   context: AnimationContext,
   cursor: CursorContext,
   bbox: DOMRectReadOnly,
@@ -28,7 +28,7 @@ export const addPointerEvents = (
 };
 
 export const addWindowEvents = (
-  target: Element,
+  target: HTMLElement,
   context: AnimationContext,
   options: RenderOptions,
 ) => {
