@@ -38,6 +38,6 @@ export const addWindowEvents = (
     context.cols = updatedCellMetrics.cols;
     context.cellWidth = updatedCellMetrics.cellWidth;
     context.cellHeight = updatedCellMetrics.cellHeight;
-    bootElements(target, context, options);
+    bootElements(target, context);
   });
 };

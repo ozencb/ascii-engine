@@ -8,13 +8,8 @@ import {
   RenderOptions,
 } from './types';
 
-const createSpanElement = (resolution: Resolution) => {
-  const maxHeight = 128;
-  const minHeight = 8;
-  const calculatedHeight =
-    maxHeight -
-    ((resolution - 1) * (maxHeight - minHeight)) /
-      (Object.keys(Resolution).length / 2 - 1);
+const createSpanElement = (targetHeight: number, rows: number) => {
+  const calculatedHeight = Math.floor(targetHeight / rows);
 
   const span = document.createElement('span');
   span.style.display = 'block';
@@ -23,7 +18,7 @@ const createSpanElement = (resolution: Resolution) => {
   span.style.fontSize = calculatedHeight + 'px';
   span.style.userSelect = 'none';
   span.style.overflow = 'hidden';
-  span.style.lineHeight = '1.1';
+  span.style.lineHeight = '1';
   span.innerHTML = '&nbsp;';
 
   return span;
@@ -37,7 +32,7 @@ export const calculateCellMetrics = (
     target.getBoundingClientRect();
 
   // temp element for getting real block height
-  const tempEl = createSpanElement(resolution);
+  const tempEl = createSpanElement(targetHeight, resolution);
 
   tempEl.style.visibility = 'hidden';
   tempEl.style.display = 'inline';
@@ -71,15 +66,13 @@ const bootCursor = (
   return cursor;
 };
 
-export const bootElements = (
-  target: Element,
-  context: AnimationContext,
-  options: RenderOptions,
-) => {
+export const bootElements = (target: Element, context: AnimationContext) => {
+  const { height: targetHeight } = target.getBoundingClientRect();
   // reset first
   target.innerHTML = '';
+
   for (let i = 0; i < context.rows; i++) {
-    target.appendChild(createSpanElement(options.resolution));
+    target.appendChild(createSpanElement(targetHeight, context.rows));
   }
 };
 
@@ -111,18 +104,11 @@ const processFrameBuffer = (
   context: AnimationContext,
   frameBuffer: FrameBuffer,
 ) => {
-  const fragment = document.createDocumentFragment();
-
   for (let i = 0; i < context.rows; i++) {
     const rowElement = getRowElement(target, i);
+    if (!rowElement) continue;
 
-    if (!rowElement) {
-      continue;
-    }
-
-    const rowFragment = document.createDocumentFragment();
     const rowContent = rowElement.innerHTML.split('');
-
     frameBuffer[i].forEach((char, j) => {
       if (rowContent[j] !== char) {
         rowContent[j] = char;
@@ -130,10 +116,7 @@ const processFrameBuffer = (
     });
 
     rowElement.innerHTML = rowContent.join('');
-    rowFragment.appendChild(rowElement);
-    fragment.appendChild(rowFragment);
   }
-  target.appendChild(fragment);
 };
 
 const runAnimationLoop = (
@@ -146,22 +129,25 @@ const runAnimationLoop = (
   const frameBuffer: FrameBuffer = [];
 
   function loop(timestamp: number) {
+    //if (context.frame > 1) return;
     context.deltaTime = (timestamp - previousTimestamp) / 1000;
     context.elapsedTime += context.deltaTime;
     previousTimestamp = timestamp;
 
     for (let i = 0; i < context.rows; i++) {
       if (!frameBuffer[i]) {
-        frameBuffer[i] = Array(context.cols).fill('&nbsp;');
+        frameBuffer[i] = Array(context.cols).fill(null);
       }
     }
 
     for (let i = 0; i < context.rows; i++) {
       for (let j = 0; j < context.cols; j++) {
         const coords = { x: j, y: i };
-        const char = animation.main(coords, context, frameBuffer, cursor);
+        let char = animation.main(coords, context, frameBuffer, cursor);
 
-        frameBuffer[i][j] = char || '&nbsp;';
+        if (!char || char === ' ') char = '&nbsp;';
+
+        frameBuffer[i][j] = char;
       }
     }
 
@@ -178,14 +164,14 @@ export const render = (
   target: Element | null,
   animation: Animation,
   options: RenderOptions = {
-    resolution: Resolution.High,
+    resolution: Resolution.Maximum,
   },
 ): void => {
   if (!target) throw new Error('Target element cannot be null');
 
   const context = bootContext(target, options);
 
-  bootElements(target, context, options);
+  bootElements(target, context);
   const cursor = bootCursor(target, context);
 
   runAnimationLoop(target, context, animation, cursor);
