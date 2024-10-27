@@ -1,2 +1,4 @@
 export { render } from './renderer';
-export * as Demo from './demo';
+export { Resolution } from './constants';
+
+export * from './demo';

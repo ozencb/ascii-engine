@@ -48,8 +48,7 @@ export const calculateCellMetrics = (
   tempEl.innerHTML = Nbsp;
   target.appendChild(tempEl);
 
-  const { height: baseHeight, width: baseWidth } =
-    tempEl.getBoundingClientRect();
+  const { height: baseHeight } = tempEl.getBoundingClientRect();
   target.removeChild(tempEl);
 
   const scale = resolution * ScaleFactor;
@@ -162,7 +161,7 @@ const runAnimationLoop = (
     for (let i = 0; i < context.rows; i++) {
       for (let j = 0; j < context.cols; j++) {
         const coords = { x: j, y: i };
-        const char = animation.main(coords, context, frameBuffer, cursor);
+        const char = animation(coords, context, frameBuffer, cursor);
 
         frameBuffer[i][j] = !char || char === ' ' ? Nbsp : char;
       }

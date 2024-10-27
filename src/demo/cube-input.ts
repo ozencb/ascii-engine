@@ -2,11 +2,11 @@
  * This demo was created with the help of ChatGPT 4o
  */
 
-import { AnimationContext, FrameBuffer, RenderFunction } from './types';
+import { AnimationContext, FrameBuffer, Animation } from '../types';
 
 // Projection constants and rotation speed
 const FOV = 300; // Field of view for perspective
-const DISTANCE = 35; // Distance of the cube from the viewer
+const DISTANCE = 45; // Distance of the cube from the viewer
 
 // Define cube vertices and edges
 const cubeVertices = [
@@ -35,6 +35,14 @@ const edges = [
   [2, 6],
   [3, 7], // Connecting edges
 ];
+
+// Initial rotation angles for the cube
+let rotationX = 0;
+let rotationY = 0;
+
+// Track the last cursor position for calculating drag distance
+let lastCursorX = 0;
+let lastCursorY = 0;
 
 // Rotate point on X-axis
 const rotateX = (point: { x: number; y: number; z: number }, angle: number) => {
@@ -101,13 +109,22 @@ const drawLine = (
 };
 
 // Main function to render the rotating cube
-export const main: RenderFunction = (coord, context, buffer, _) => {
-  // Define rotation angles based on elapsed time for continuous rotation
-  const angle = context.elapsedTime * 0.5;
+export const CubeInput: Animation = (coord, context, buffer, cursor) => {
+  // If the cursor is pressed, update rotation angles based on drag distance
+  if (cursor.pressed) {
+    const dx = cursor.x - lastCursorX;
+    const dy = cursor.y - lastCursorY;
+    rotationX += dy * 0.01; // Scale for smooth rotation
+    rotationY += dx * 0.01;
+  }
+
+  // Update the last cursor position for the next frame
+  lastCursorX = cursor.x;
+  lastCursorY = cursor.y;
 
   // Rotate and project each vertex
   const projectedVertices = cubeVertices.map((v) => {
-    const rotatedVertex = rotateX(rotateY(v, angle), angle); // Rotate around Y and X
+    const rotatedVertex = rotateX(rotateY(v, rotationY), rotationX);
     return project(rotatedVertex, context);
   });
 

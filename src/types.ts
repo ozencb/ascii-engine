@@ -27,18 +27,13 @@ export type Coordinates = {
   y: number;
 };
 
-export type RenderFunction = (
+export type Animation = (
   coords: Coordinates,
   ctx: AnimationContext,
   frameBuffer: FrameBuffer,
   cursor: CursorContext,
 ) => string | null;
 
-export type Animation = {
-  main: RenderFunction;
-  pre?: RenderFunction;
-  post?: RenderFunction;
-};
 export type RenderOptions = {
   resolution: number;
 };

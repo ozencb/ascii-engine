@@ -10,9 +10,15 @@
     <script src="../dist/ascii-engine.js"></script>
 
     <script>
+      const availableDemos = [
+        AsciiEngine.Cube,
+        AsciiEngine.Static,
+        AsciiEngine.CubeInput,
+      ];
       AsciiEngine.render(
         document.getElementById('background'),
-        AsciiEngine.Demo,
+        availableDemos[0], // Change this to see different demos
+        { resolution: 8 },
       );
     </script>
   </body>
