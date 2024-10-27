@@ -14,7 +14,17 @@ You can install ASCII Engine via npm:
 npm install ascii-engine
 ```
 
+or use the script directly in your HTML:
+
+```
+https://ozencb.github.io/ascii-engine/ascii-engine.js
+```
+
 ## Usage
+
+Create a placeholder container element with an id of your choice, and pass this element down to the render's function first parameter. For the second parameter, pass an animation function.
+
+The container element should ideally have a height of 100vh.
 
 ### Using a Script Tag
 
@@ -23,22 +33,24 @@ Include the ASCII Engine script in your HTML file and call the `render` function
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Engine Example</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ozencb.github.io/ascii-engine/ascii-engine.js"></script>
+  </head>
+
+  <body style="background-color: black; color: white">
     <div id="background" style="height: 100vh"></div>
-    <script src="../ascii-engine.js"></script>
     <script>
-        AsciiEngine.render(
-            document.getElementById('background'),
-            AnAnimationModule,
-            { resolution: 8 }
-        );
+      const density = [' ', '░', '▒', '▓', '█'];
+      const animation = () => {
+        return density[Math.floor(Math.random() * density.length)];
+      };
+
+      AsciiEngine.render(document.getElementById('background'), animation);
     </script>
-</body>
+  </body>
 </html>
 ```
 
@@ -46,15 +58,15 @@ Include the ASCII Engine script in your HTML file and call the `render` function
 
 Import the `render` function from the ASCII Engine package and use it in your JavaScript code:
 
-```javascript
+```typescript
 import { render } from 'ascii-engine';
 
-const backgroundElement = document.getElementById('background');
-const animationModule = {
-    // Define your animation module here
+const density = [' ', '░', '▒', '▓', '█'];
+const animation = () => {
+  return density[Math.floor(Math.random() * density.length)];
 };
 
-render(backgroundElement, animationModule);
+render(document.getElementById('background'), animation);
 ```
 
 ## Example Animation Module
