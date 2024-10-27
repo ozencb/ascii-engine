@@ -24,11 +24,6 @@ jobs:
       - name: Build the project
         run: yarn build
 
-      - name: Publish to npm
-        run: yarn publish
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Generate CDN Bundle
         run: |
           mkdir -p dist/cdn
@@ -38,3 +33,9 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: 'dist/cdn'
+
+      - name: Publish to npm
+        run: yarn publish
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

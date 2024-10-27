@@ -1,0 +1,7 @@
+name = "text-engine"
+compatibility_date = "2024-10-27"
+main = "dist/cdn/ascii-engine.js"
+
+[site]
+bucket = "./dist/cdn" 
+entry-point = "workers"
