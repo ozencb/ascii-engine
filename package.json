@@ -42,8 +42,5 @@
   },
   "dependencies": {
     "tslib": "^2.7.0"
-  },
-  "resolutions": {
-    "rollup": "4.24.0"
   }
 }
