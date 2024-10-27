@@ -394,4 +394,3 @@ const CubeInput = (coord, context, buffer, cursor) => {
 };
 
 export { Cube, CubeInput, Resolution, Static, render };
-//# sourceMappingURL=ascii-engine.esm.js.map

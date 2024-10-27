@@ -404,4 +404,3 @@ var AsciiEngine = (function (exports) {
   return exports;
 
 })({});
-//# sourceMappingURL=ascii-engine.js.map
