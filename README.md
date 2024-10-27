@@ -2,6 +2,8 @@
 
 An ASCII-based renderer for creating animations directly in the browser. ASCII Engine allows for dynamic, grid-based animations displayed as text, providing a unique, retro feel. This package is still under development.
 
+![Demo](Demo.gif)
+
 ## Installation
 
 You can install ASCII Engine via npm:
