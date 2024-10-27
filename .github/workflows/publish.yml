@@ -25,7 +25,7 @@ jobs:
         run: yarn build
 
       - name: Deploy to Cloudflare using Wrangler
-        run: yarn wrangler publish
+        run: yarn wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
