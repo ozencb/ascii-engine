@@ -34,12 +34,20 @@ jobs:
         id: extract_tag
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy versioned folder to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           destination_dir: ${{ env.VERSION }}
+
+      - name: Deploy to 'latest' folder if this is the latest tag
+        if: ${{ github.ref == format('refs/tags/{0}', env.VERSION) }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: latest
 
       # - name: Publish to npm
       #   run: yarn publish --non-interactive
