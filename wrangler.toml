@@ -4,4 +4,3 @@ main = "dist/cdn/ascii-engine.js"
 
 [site]
 bucket = "./dist/cdn" 
-entry-point = "workers"
