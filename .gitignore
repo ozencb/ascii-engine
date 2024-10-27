@@ -40,8 +40,5 @@ coverage/
 *.orig
 *.save
 
-# Ignore package-lock and yarn.lock files
-package-lock.json
-yarn.lock
 
 .yarn/
