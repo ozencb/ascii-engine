@@ -17,7 +17,7 @@ npm install ascii-engine
 or use the script directly in your HTML:
 
 ```
-https://ozencb.github.io/ascii-engine/ascii-engine.js
+https://ozencb.github.io/ascii-engine/latest/ascii-engine.js
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ Include the ASCII Engine script in your HTML file and call the `render` function
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="https://ozencb.github.io/ascii-engine/ascii-engine.js"></script>
+    <script src="https://ozencb.github.io/ascii-engine/latest/ascii-engine.js"></script>
   </head>
 
   <body style="background-color: black; color: white">
