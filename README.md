@@ -26,6 +26,8 @@ Create a placeholder container element with an id of your choice, and pass this 
 
 The container element should ideally have a height of 100vh.
 
+Inspired by [ertdfgcvb](https://ertdfgcvb.xyz/)'s work.
+
 ### Using a Script Tag
 
 Include the ASCII Engine script in your HTML file and call the `render` function:
