@@ -2,6 +2,10 @@
 
 An ASCII-based renderer for creating animations directly in the browser. ASCII Engine allows for dynamic, grid-based animations displayed as text, providing a unique, retro feel. This package is still under development.
 
+The library utilizes DOM to render characters on the screen.
+
+![Demo](Demo.gif)
+
 ## Installation
 
 You can install ASCII Engine via npm:
@@ -10,7 +14,17 @@ You can install ASCII Engine via npm:
 npm install ascii-engine
 ```
 
+or use the script directly in your HTML:
+
+```
+https://ozencb.github.io/ascii-engine/ascii-engine.js
+```
+
 ## Usage
+
+Create a placeholder container element with an id of your choice, and pass this element down to the render's function first parameter. For the second parameter, pass an animation function.
+
+The container element should ideally have a height of 100vh.
 
 ### Using a Script Tag
 
@@ -19,22 +33,24 @@ Include the ASCII Engine script in your HTML file and call the `render` function
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Engine Example</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ozencb.github.io/ascii-engine/ascii-engine.js"></script>
+  </head>
+
+  <body style="background-color: black; color: white">
     <div id="background" style="height: 100vh"></div>
-    <script src="../ascii-engine.js"></script>
     <script>
-        AsciiEngine.render(
-            document.getElementById('background'),
-            AnAnimationModule,
-            { resolution: 8 }
-        );
+      const density = [' ', '░', '▒', '▓', '█'];
+      const animation = () => {
+        return density[Math.floor(Math.random() * density.length)];
+      };
+
+      AsciiEngine.render(document.getElementById('background'), animation);
     </script>
-</body>
+  </body>
 </html>
 ```
 
@@ -42,15 +58,15 @@ Include the ASCII Engine script in your HTML file and call the `render` function
 
 Import the `render` function from the ASCII Engine package and use it in your JavaScript code:
 
-```javascript
+```typescript
 import { render } from 'ascii-engine';
 
-const backgroundElement = document.getElementById('background');
-const animationModule = {
-    // Define your animation module here
+const density = [' ', '░', '▒', '▓', '█'];
+const animation = () => {
+  return density[Math.floor(Math.random() * density.length)];
 };
 
-render(backgroundElement, animationModule);
+render(document.getElementById('background'), animation);
 ```
 
 ## Example Animation Module
@@ -102,10 +118,11 @@ export const CheckerBoard: Animation = (coord: Coordinates, context: AnimationCo
     - `cols`: (number) Grid dimensions
 - `buffer`: (string[][]) The frame buffer, allowing direct mutation of the grid.
 - `cursor`: The cursor’s position and state, including:
-    - `x`: Cursor coordinates in pixels
-    - `y`: Cursor coordinates in pixels
-    - `col`, row: Cursor location in grid cells
-    - `pressed`: Whether the cursor button is pressed
+    - `x`: (number) Cursor coordinates in pixels
+    - `y`: (number) Cursor coordinates in pixels
+    - `col`: (number) Cursor location in grid cells
+    - `row`: (number) Cursor location in grid cells
+    - `pressed`: (boolean) Whether the cursor button is pressed
 
 Please check demo animations under `src/demo` for different use cases for these parameters.
 

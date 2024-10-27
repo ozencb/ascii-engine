@@ -16,7 +16,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # or the version of Node.js you are using
+          node-version: '20'
+
+      - name: Clear yarn Cache
+        run: yarn cache clean
+
+      - name: Set Yarn Registry to npm
+        run: yarn config set registry https://registry.npmjs.org/
 
       - name: Install dependencies
         run: yarn
@@ -24,20 +30,18 @@ jobs:
       - name: Build the project
         run: yarn build
 
-      - name: Publish to npm
-        run: yarn publish
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Extract version from tag
+        id: extract_tag
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-      - name: Generate CDN Bundle
-        run: |
-          mkdir -p dist/cdn
-          cp dist/ascii-engine.js dist/cdn/ascii-engine-${GITHUB_REF#refs/tags/}.js
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ascii-engine
-          directory: dist/cdn
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: ${{ env.VERSION }}
+
+      # - name: Publish to npm
+      #   run: yarn publish --non-interactive
+      #   env:
+      #     NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

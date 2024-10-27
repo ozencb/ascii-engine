@@ -7,12 +7,10 @@ export default {
       file: 'dist/ascii-engine.js',
       format: 'iife',
       name: 'AsciiEngine',
-      sourcemap: true,
     },
     {
       file: 'dist/ascii-engine.esm.js',
       format: 'es',
-      sourcemap: true,
     },
   ],
   plugins: [typescript()],

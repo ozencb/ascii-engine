@@ -2,7 +2,7 @@
   "name": "ascii-engine",
   "license": "MIT",
   "author": "Özenç Bilgili",
-  "version": "0.1.10",
+  "version": "1.0.0",
   "description": "A render engine based on text",
   "homepage": "https://github.com/ozencb/ascii-engine",
   "bugs": {
@@ -35,7 +35,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.9.0",
     "prettier": "^3.3.3",
-    "rollup": "^4.21.1",
+    "rollup": "^4.24.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.3.0"
