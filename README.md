@@ -118,10 +118,11 @@ export const CheckerBoard: Animation = (coord: Coordinates, context: AnimationCo
     - `cols`: (number) Grid dimensions
 - `buffer`: (string[][]) The frame buffer, allowing direct mutation of the grid.
 - `cursor`: The cursor’s position and state, including:
-    - `x`: Cursor coordinates in pixels
-    - `y`: Cursor coordinates in pixels
-    - `col`, row: Cursor location in grid cells
-    - `pressed`: Whether the cursor button is pressed
+    - `x`: (number) Cursor coordinates in pixels
+    - `y`: (number) Cursor coordinates in pixels
+    - `col`: (number) Cursor location in grid cells
+    - `row`: (number) Cursor location in grid cells
+    - `pressed`: (boolean) Whether the cursor button is pressed
 
 Please check demo animations under `src/demo` for different use cases for these parameters.
 
