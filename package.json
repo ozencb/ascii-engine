@@ -2,7 +2,7 @@
   "name": "ascii-engine",
   "license": "MIT",
   "author": "Özenç Bilgili",
-  "version": "0.2.07",
+  "version": "0.2.08",
   "description": "A render engine based on text",
   "homepage": "https://github.com/ozencb/ascii-engine",
   "bugs": {
