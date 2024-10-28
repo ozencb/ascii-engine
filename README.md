@@ -22,7 +22,7 @@ https://ozencb.github.io/ascii-engine/latest/ascii-engine.js
 
 ## Usage
 
-Create a placeholder container element with an id of your choice, and pass this element down to the render's function first parameter. For the second parameter, pass an animation function.
+Create a placeholder container element with an id of your choice, and pass this element down to the render function's first argument. For the second parameter, pass an animation function.
 
 The container element should ideally have a height of 100vh.
 
