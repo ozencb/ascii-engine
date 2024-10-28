@@ -1,6 +1,6 @@
 # ASCII Engine
 
-An ASCII-based renderer for creating animations directly in the browser. ASCII Engine allows for dynamic, grid-based animations displayed as text, providing a unique, retro feel. This package is still under development.
+An ASCII-based renderer for creating animations directly in the browser. ASCII Engine allows for dynamic, grid-based animations displayed as text. This package is still under development.
 
 The library utilizes DOM to render characters on the screen.
 
