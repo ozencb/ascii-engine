@@ -111,11 +111,18 @@ const drawLine = (
 // Main function to render the rotating cube
 export const CubeInput: Animation = (coord, context, buffer, cursor) => {
   // If the cursor is pressed, update rotation angles based on drag distance
+
+  const angle = context.elapsedTime * 0.5;
+
   if (cursor.pressed) {
     const dx = cursor.x - lastCursorX;
     const dy = cursor.y - lastCursorY;
     rotationX += dy * 0.01; // Scale for smooth rotation
     rotationY += dx * 0.01;
+  } else {
+    // If not pressed, rotate the cube continuously
+    rotationX = angle;
+    rotationY = angle;
   }
 
   // Update the last cursor position for the next frame
