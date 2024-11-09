@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ozencb.github.io/ascii-engine/latest/ascii-engine.js"></script>
+  </head>
+  <body style="background-color: black; color: white">
+    <div id="background" style="height: 100vh"></div>
+    <script>
+      const availableDemos = [
+        AsciiEngine.Cube,
+        AsciiEngine.Static,
+        AsciiEngine.CubeInput
+      ];
+      AsciiEngine.render(
+        document.getElementById('background'),
+        availableDemos[2], // Change this to see different demos
+        { resolution: 8 }
+      );
+    </script>
+  </body>
+</html>
