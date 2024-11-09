@@ -4,6 +4,7 @@ An ASCII-based renderer for creating animations directly in the browser. ASCII E
 
 The library utilizes DOM to render characters on the screen.
 
+[Demo](https://ozencb.github.io/ascii-engine/demo/demo.html)
 ![Demo](Demo.gif)
 
 ## Installation
