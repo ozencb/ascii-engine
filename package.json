@@ -27,6 +27,7 @@
   "keywords": [],
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@rollup/plugin-terser": "^0.4.4",
     "@types/eslint": "^9",
     "@typescript-eslint/eslint-plugin": "^8.3.0",
     "@typescript-eslint/parser": "^8.3.0",
@@ -36,12 +37,15 @@
     "globals": "^15.9.0",
     "prettier": "^3.3.3",
     "rollup": "^4.24.2",
-    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.3.0"
   },
   "dependencies": {
     "tslib": "^2.7.0"
+  },
+  "resolutions": {
+    "cross-spawn": "^7.0.5",
+    "brace-expansion": "^2.0.2"
   }
 }
